@@ -1,38 +1,46 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { resumes, type InsertResume, type Resume } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  createResume(resume: InsertResume): Promise<Resume>;
+  getResume(id: number): Promise<Resume | undefined>;
+  getResumes(): Promise<Resume[]>;
+  updateResumeGeneratedContent(id: number, content: Partial<Resume>): Promise<Resume>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async createResume(insertResume: InsertResume): Promise<Resume> {
+    const [resume] = await db
+      .insert(resumes)
+      .values(insertResume)
+      .returning();
+    return resume;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getResume(id: number): Promise<Resume | undefined> {
+    const [resume] = await db
+      .select()
+      .from(resumes)
+      .where(eq(resumes.id, id));
+    return resume;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getResumes(): Promise<Resume[]> {
+    return await db
+      .select()
+      .from(resumes)
+      .orderBy(desc(resumes.createdAt));
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateResumeGeneratedContent(id: number, content: Partial<Resume>): Promise<Resume> {
+    const [updatedResume] = await db
+      .update(resumes)
+      .set(content)
+      .where(eq(resumes.id, id))
+      .returning();
+    return updatedResume;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
