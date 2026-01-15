@@ -15,9 +15,9 @@ export default function Home() {
         {/* Hero Section */}
         <section className="text-center mb-16 space-y-6">
           <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight">
-            Land your dream job with <br className="hidden md:block"/>
+            Elevate your career with <br className="hidden md:block"/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-              AI-Powered Resumes
+              RESUME CREATE
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

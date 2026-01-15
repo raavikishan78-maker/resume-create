@@ -16,11 +16,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
               <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                  <Briefcase size={20} strokeWidth={2.5} />
-                </div>
+                <img src="/attached_assets/WhatsApp_Image_2026-01-15_at_11.48.13_1768457945767.jpeg" alt="Logo" className="w-8 h-8 rounded-lg object-cover" />
                 <span className="font-display font-bold text-xl tracking-tight text-foreground">
-                  CareerCoach<span className="text-primary">AI</span>
+                  RESUME CREATE
                 </span>
               </Link>
             </div>
@@ -74,7 +72,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="border-t bg-muted/30 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-muted-foreground text-sm">
-          <p>© {new Date().getFullYear()} CareerCoach AI. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} RESUME CREATE. All rights reserved.</p>
         </div>
       </footer>
     </div>
