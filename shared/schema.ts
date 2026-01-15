@@ -9,7 +9,7 @@ export const resumes = pgTable("resumes", {
   phone: text("phone"),
   location: text("location"),
   currentRole: text("current_role"),
-  workExperience: text("work_experience").notNull(), // Raw text or JSON? Text is simpler for AI to parse from a big block
+  workExperience: text("work_experience").notNull(), 
   skills: text("skills").notNull(),
   education: text("education").notNull(),
   projects: text("projects"),
@@ -19,12 +19,16 @@ export const resumes = pgTable("resumes", {
   targetJobTitle: text("target_job_title").notNull(),
   jobDescription: text("job_description").notNull(),
   extraInstructions: text("extra_instructions"),
+  
+  // Design Preference
+  templateId: text("template_id").default("modern"),
+  colorTheme: text("color_theme").default("blue"),
 
   // Generated Content
-  generatedResume: text("generated_resume"), // The Markdown/Text resume
+  generatedResume: text("generated_resume"),
   generatedCoverLetter: text("generated_cover_letter"),
   atsScore: integer("ats_score"),
-  improvementSuggestions: jsonb("improvement_suggestions"), // Array of strings
+  improvementSuggestions: jsonb("improvement_suggestions"),
   
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -47,10 +51,4 @@ export interface AtsAnalysis {
   score: number;
   missingKeywords: string[];
   suggestions: string[];
-}
-
-export interface GeneratedContent {
-  resume: string;
-  coverLetter: string;
-  atsAnalysis: AtsAnalysis;
 }

@@ -1,121 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Outfit', sans-serif;
-
-  /* Professional Corporate Blue Palette */
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
-  
-  --primary: 221 83% 53%;
-  --primary-foreground: 210 40% 98%;
-  
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
-  
-  --muted: 214 32% 91%;
-  --muted-foreground: 215 16% 47%;
-  
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
-  
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;
-  
-  --radius: 0.75rem;
-  
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-}
-
-.dark {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
-  
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 11%;
-  
-  --secondary: 217 19% 27%;
-  --secondary-foreground: 210 40% 98%;
-  
-  --muted: 217 19% 27%;
-  --muted-foreground: 215 20% 65%;
-  
-  --accent: 217 19% 27%;
-  --accent-foreground: 210 40% 98%;
-  
-  --destructive: 0 62% 30%;
-  --destructive-foreground: 210 40% 98%;
-  
-  --border: 217 19% 27%;
-  --input: 217 19% 27%;
-  --ring: 224 76% 48%;
-  
-  --card: 222 47% 11%;
-  --card-foreground: 210 40% 98%;
-}
-
 @layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    @apply bg-background text-foreground antialiased font-sans;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight text-foreground;
+    @apply font-sans antialiased bg-background text-foreground;
   }
 }
 
-/* Custom Markdown Styles for Resume Preview */
-.markdown-content h1 {
-  @apply text-2xl font-bold mb-4 border-b pb-2 text-primary;
+/* Template Styles */
+/* Modern Template */
+.template-modern .resume-container {
+  @apply grid grid-cols-[30%_70%] gap-6 p-8 bg-white text-slate-800 font-sans;
 }
-.markdown-content h2 {
-  @apply text-xl font-bold mt-6 mb-3 text-foreground;
+.template-modern .sidebar {
+  @apply bg-slate-50 p-4 rounded-lg;
 }
-.markdown-content h3 {
-  @apply text-lg font-semibold mt-4 mb-2 text-foreground/90;
+.template-modern h1 {
+  @apply text-3xl font-bold uppercase tracking-tight mb-1 text-[var(--theme-color)];
 }
-.markdown-content p {
-  @apply mb-3 leading-relaxed text-foreground/80;
+.template-modern h2 {
+  @apply text-lg font-semibold uppercase tracking-wide border-b-2 border-[var(--theme-color)] mb-3 pb-1 mt-6 text-slate-700;
 }
-.markdown-content ul {
-  @apply list-disc list-inside mb-4 space-y-1 text-foreground/80;
-}
-.markdown-content li {
-  @apply pl-1;
-}
-.markdown-content strong {
-  @apply font-semibold text-foreground;
+.template-modern .sidebar h2 {
+  @apply text-base border-b border-slate-300;
 }
 
-/* Print Styles */
+/* Executive Template */
+.template-executive .resume-container {
+  @apply max-w-4xl mx-auto p-10 bg-white text-slate-900 font-serif;
+}
+.template-executive h1 {
+  @apply text-4xl font-bold text-center mb-2;
+}
+.template-executive .contact-info {
+  @apply text-center text-sm text-slate-600 mb-8 border-b pb-4 border-slate-300 italic;
+}
+.template-executive h2 {
+  @apply text-xl font-bold uppercase border-b border-slate-800 mb-4 mt-6;
+}
+
+/* Creative Template */
+.template-creative .resume-container {
+  @apply max-w-4xl mx-auto p-8 bg-white font-sans;
+}
+.template-creative h1 {
+  @apply text-5xl font-black text-[var(--theme-color)] mb-4;
+}
+.template-creative h2 {
+  @apply text-2xl font-bold mb-3 mt-8 bg-[var(--theme-color)] text-white px-4 py-1 inline-block transform -skew-x-6 rounded-sm;
+}
+.template-creative .section-content {
+  @apply border-l-4 border-[var(--theme-color)] pl-4 ml-2;
+}
+
+/* Tech Template */
+.template-tech .resume-container {
+  @apply max-w-4xl mx-auto p-8 bg-slate-900 text-slate-100 font-mono;
+}
+.template-tech h1 {
+  @apply text-3xl text-green-400 mb-2;
+}
+.template-tech h2 {
+  @apply text-xl text-blue-400 mt-6 mb-3 border-b border-slate-700 pb-1;
+}
+.template-tech a {
+  @apply text-green-400 underline;
+}
+
+/* Academic Template */
+.template-academic .resume-container {
+  @apply max-w-4xl mx-auto p-12 bg-white text-black font-serif leading-relaxed;
+}
+.template-academic h1 {
+  @apply text-3xl font-normal text-center mb-6;
+}
+.template-academic h2 {
+  @apply text-lg font-bold uppercase tracking-wider text-center mt-8 mb-4;
+}
+
+/* Startup Template */
+.template-startup .resume-container {
+  @apply max-w-4xl mx-auto p-8 bg-white font-sans;
+}
+.template-startup h1 {
+  @apply text-4xl font-extrabold tracking-tighter mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-color)] to-purple-600;
+}
+.template-startup h2 {
+  @apply text-xl font-bold mt-8 mb-4 flex items-center gap-2;
+}
+.template-startup h2::before {
+  content: "";
+  @apply w-2 h-8 bg-[var(--theme-color)] rounded-full;
+}
+
 @media print {
-  @page {
-    margin: 0;
-  }
-  body {
-    background: white;
-  }
   .no-print {
-    display: none !important;
+    display: none;
   }
-  .print-only {
-    display: block !important;
-  }
-  .resume-paper {
+  .resume-container {
     box-shadow: none !important;
-    border: none !important;
+    padding: 0 !important;
     margin: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
   }
 }

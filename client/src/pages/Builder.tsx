@@ -11,10 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Sparkles, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { templates, colorThemes } from "@/lib/templates";
+import { cn } from "@/lib/utils";
 
-const steps = ["Personal Info", "Experience & Skills", "Target Job"];
+const steps = ["Personal Info", "Experience & Skills", "Target Job", "Design"];
 
 // Extend the schema for form validation if needed, or use as is
 const formSchema = insertResumeSchema;
@@ -39,11 +41,15 @@ export default function Builder() {
       targetJobTitle: "",
       jobDescription: "",
       extraInstructions: "",
+      templateId: "modern",
+      colorTheme: "blue"
     },
     mode: "onChange" 
   });
 
-  const { register, trigger, formState: { errors, isValid } } = form;
+  const { register, trigger, watch, setValue, formState: { errors, isValid } } = form;
+  const currentTemplateId = watch("templateId");
+  const currentColorTheme = watch("colorTheme");
 
   const nextStep = async () => {
     let fieldsToValidate: (keyof FormData)[] = [];
@@ -55,6 +61,7 @@ export default function Builder() {
     } else if (currentStep === 2) {
       fieldsToValidate = ["targetJobTitle", "jobDescription"];
     }
+    // Step 3 (Design) doesn't strictly need validation as defaults are set
 
     const isStepValid = await trigger(fieldsToValidate);
     if (isStepValid) {
@@ -86,7 +93,7 @@ export default function Builder() {
 
         <StepIndicator currentStep={currentStep} steps={steps} />
 
-        <Card className="p-6 md:p-8 shadow-lg border-border/60 bg-card/50 backdrop-blur-sm">
+        <Card className="p-6 md:p-8 shadow-lg border-border/60 bg-card/50 backdrop-blur-sm mt-8">
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <AnimatePresence mode="wait">
               {currentStep === 0 && (
@@ -232,6 +239,72 @@ export default function Builder() {
                       className="min-h-[80px]" 
                       {...register("extraInstructions")} 
                     />
+                  </div>
+                </motion.div>
+              )}
+
+              {currentStep === 3 && (
+                <motion.div
+                  key="step4"
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  className="space-y-8"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">Choose a Template</h3>
+                      <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full">
+                        {templates.length} Styles Available
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {templates.map((template) => (
+                        <div
+                          key={template.id}
+                          className={cn(
+                            "cursor-pointer rounded-lg border-2 p-4 hover:border-primary/50 transition-all relative",
+                            currentTemplateId === template.id ? "border-primary bg-primary/5 shadow-sm" : "border-border"
+                          )}
+                          onClick={() => setValue("templateId", template.id)}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-semibold text-foreground">{template.name}</h4>
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{template.description}</p>
+                            </div>
+                            {currentTemplateId === template.id && (
+                              <div className="bg-primary text-primary-foreground rounded-full p-1 absolute top-3 right-3">
+                                <Check className="h-3 w-3" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Select Accent Color</h3>
+                    <div className="flex flex-wrap gap-4">
+                      {colorThemes.map((theme) => (
+                        <div
+                          key={theme.id}
+                          className={cn(
+                            "cursor-pointer w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-sm border",
+                            currentColorTheme === theme.id ? "ring-2 ring-offset-2 ring-primary" : "border-transparent"
+                          )}
+                          style={{ backgroundColor: theme.hex }}
+                          onClick={() => setValue("colorTheme", theme.id)}
+                          title={theme.name}
+                        >
+                          {currentColorTheme === theme.id && (
+                            <Check className="h-6 w-6 text-white drop-shadow-md" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}

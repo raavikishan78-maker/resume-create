@@ -4,10 +4,10 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AtsScoreChart } from "@/components/AtsScoreChart";
-import { Loader2, Download, Printer, CheckCircle2, XCircle, Copy } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { Loader2, Printer, CheckCircle2, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { ResumeRender } from "@/components/ResumeRender";
 
 export default function Result() {
   const [, params] = useRoute("/resumes/:id");
@@ -81,16 +81,7 @@ export default function Result() {
             {/* Main Content Area */}
             <div className="lg:col-span-2">
               <TabsContent value="resume" className="mt-0">
-                <div className="resume-paper bg-white text-black p-8 md:p-12 shadow-xl rounded-lg border min-h-[800px] markdown-content">
-                  {resume.generatedResume ? (
-                    <ReactMarkdown>{resume.generatedResume}</ReactMarkdown>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-400 space-y-4">
-                      <Loader2 className="w-10 h-10 animate-spin" />
-                      <p>Generating resume content...</p>
-                    </div>
-                  )}
-                </div>
+                <ResumeRender resume={resume} />
               </TabsContent>
 
               <TabsContent value="cover-letter" className="mt-0">
@@ -172,9 +163,7 @@ export default function Result() {
 
       {/* Printable Area - Only visible when printing */}
       <div className="print-only hidden">
-        <div className="p-8">
-           <ReactMarkdown>{resume.generatedResume || ""}</ReactMarkdown>
-        </div>
+        <ResumeRender resume={resume} />
       </div>
     </Layout>
   );
