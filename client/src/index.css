@@ -11,99 +11,20 @@
   }
 }
 
-/* Template Styles */
-/* Modern Template */
-.template-modern .resume-container {
-  @apply grid grid-cols-[30%_70%] gap-6 p-8 bg-white text-slate-800 font-sans;
-}
-.template-modern .sidebar {
-  @apply bg-slate-50 p-4 rounded-lg;
-}
-.template-modern h1 {
-  @apply text-3xl font-bold uppercase tracking-tight mb-1 text-[var(--theme-color)];
-}
-.template-modern h2 {
-  @apply text-lg font-semibold uppercase tracking-wide border-b-2 border-[var(--theme-color)] mb-3 pb-1 mt-6 text-slate-700;
-}
-.template-modern .sidebar h2 {
-  @apply text-base border-b border-slate-300;
-}
-
-/* Executive Template */
-.template-executive .resume-container {
-  @apply max-w-4xl mx-auto p-10 bg-white text-slate-900 font-serif;
-}
-.template-executive h1 {
-  @apply text-4xl font-bold text-center mb-2;
-}
-.template-executive .contact-info {
-  @apply text-center text-sm text-slate-600 mb-8 border-b pb-4 border-slate-300 italic;
-}
-.template-executive h2 {
-  @apply text-xl font-bold uppercase border-b border-slate-800 mb-4 mt-6;
-}
-
-/* Creative Template */
-.template-creative .resume-container {
-  @apply max-w-4xl mx-auto p-8 bg-white font-sans;
-}
-.template-creative h1 {
-  @apply text-5xl font-black text-[var(--theme-color)] mb-4;
-}
-.template-creative h2 {
-  @apply text-2xl font-bold mb-3 mt-8 bg-[var(--theme-color)] text-white px-4 py-1 inline-block transform -skew-x-6 rounded-sm;
-}
-.template-creative .section-content {
-  @apply border-l-4 border-[var(--theme-color)] pl-4 ml-2;
-}
-
-/* Tech Template */
-.template-tech .resume-container {
-  @apply max-w-4xl mx-auto p-8 bg-slate-900 text-slate-100 font-mono;
-}
-.template-tech h1 {
-  @apply text-3xl text-green-400 mb-2;
-}
-.template-tech h2 {
-  @apply text-xl text-blue-400 mt-6 mb-3 border-b border-slate-700 pb-1;
-}
-.template-tech a {
-  @apply text-green-400 underline;
-}
-
-/* Academic Template */
-.template-academic .resume-container {
-  @apply max-w-4xl mx-auto p-12 bg-white text-black font-serif leading-relaxed;
-}
-.template-academic h1 {
-  @apply text-3xl font-normal text-center mb-6;
-}
-.template-academic h2 {
-  @apply text-lg font-bold uppercase tracking-wider text-center mt-8 mb-4;
-}
-
-/* Startup Template */
-.template-startup .resume-container {
-  @apply max-w-4xl mx-auto p-8 bg-white font-sans;
-}
-.template-startup h1 {
-  @apply text-4xl font-extrabold tracking-tighter mb-2 bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-color)] to-purple-600;
-}
-.template-startup h2 {
-  @apply text-xl font-bold mt-8 mb-4 flex items-center gap-2;
-}
-.template-startup h2::before {
-  content: "";
-  @apply w-2 h-8 bg-[var(--theme-color)] rounded-full;
-}
+/* Prose styles for resume markdown content */
+.prose p { margin-bottom: 0.4em; margin-top: 0; }
+.prose ul { padding-left: 1.2em; margin: 0.3em 0; }
+.prose li { margin-bottom: 0.15em; }
+.prose strong { font-weight: 700; }
+.prose h3 { font-size: 0.875em; font-weight: 700; margin-top: 0.8em; margin-bottom: 0.2em; }
+.prose h4 { font-size: 0.8em; font-weight: 600; margin-top: 0.5em; }
+.prose-invert p { color: inherit; }
+.prose-invert ul { color: inherit; }
+.prose-invert li { color: inherit; }
 
 @media print {
-  .no-print {
-    display: none;
-  }
-  .resume-container {
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  body { background: white; }
+  header, footer, nav { display: none !important; }
 }
