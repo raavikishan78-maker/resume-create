@@ -17,9 +17,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-2">
               <Link href="/" className="flex items-center gap-2">
                 <img
-                  src="/attached_assets/WhatsApp_Image_2026-01-15_at_11.48.13_1768457945767.jpeg"
+                  src="/logo.png"
                   alt="Resume Create Logo"
-                  className="w-8 h-8 rounded-lg object-cover"
+                  className="w-8 h-8 rounded-sm object-contain"
                 />
                 <span className="font-display font-bold text-xl tracking-tight text-foreground">
                   RESUME CREATE
