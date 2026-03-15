@@ -16,7 +16,16 @@ export default function Home() {
         <section className="text-center mb-16 space-y-6">
           <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight">
             Elevate your career with <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+            <span
+              className="inline-block text-black dark:text-white font-black tracking-[0.12em] uppercase"
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                letterSpacing: "0.14em",
+                textShadow: "2px 2px 0px rgba(0,0,0,0.08)",
+                borderBottom: "4px solid black",
+                paddingBottom: "4px",
+              }}
+            >
               RESUME CREATE
             </span>
           </h1>
