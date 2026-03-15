@@ -10,6 +10,7 @@ interface ResumeRenderProps {
   resume: Resume;
   editable?: boolean;
   onContentChange?: (content: string) => void;
+  photoOverride?: string | null;
 }
 
 function parseResumeContent(markdown: string) {
@@ -55,7 +56,7 @@ function parseResumeContent(markdown: string) {
   return { name, subtitle, contact: contact.trim(), summary, sections: mainSections };
 }
 
-function SidebarLeftLayout({ content, theme, editable, onEdit }: LayoutProps) {
+function SidebarLeftLayout({ content, theme, photo }: LayoutProps) {
   const { name, contact, summary, sections } = parseResumeContent(content);
   const half = Math.ceil(sections.length / 2);
   const sidebarSections = sections.slice(0, half);
@@ -65,8 +66,12 @@ function SidebarLeftLayout({ content, theme, editable, onEdit }: LayoutProps) {
     <div className="flex min-h-[1050px] font-sans text-sm bg-white" style={{ "--tc": theme.hex } as any}>
       {/* Sidebar */}
       <div className="w-[35%] text-white p-6 flex flex-col gap-4" style={{ backgroundColor: theme.hex }}>
-        <div className="w-20 h-20 rounded-full bg-white/20 border-4 border-white/40 flex items-center justify-center mx-auto mb-2">
-          <span className="text-2xl font-bold text-white/80">{name.charAt(0)}</span>
+        <div className="w-20 h-20 rounded-full overflow-hidden bg-white/20 border-4 border-white/40 flex items-center justify-center mx-auto mb-2">
+          {photo ? (
+            <img src={photo} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-2xl font-bold text-white/80">{name.charAt(0)}</span>
+          )}
         </div>
         <div className="text-center">
           <h1 className="text-xl font-bold text-white uppercase tracking-wide">{name || "Your Name"}</h1>
@@ -204,7 +209,7 @@ function TwoColumnLayout({ content, theme }: LayoutProps) {
   );
 }
 
-function TopBarLayout({ content, theme }: LayoutProps) {
+function TopBarLayout({ content, theme, photo }: LayoutProps) {
   const { name, contact, summary, sections } = parseResumeContent(content);
   return (
     <div className="min-h-[1050px] font-sans text-sm bg-white">
@@ -214,8 +219,12 @@ function TopBarLayout({ content, theme }: LayoutProps) {
           <h1 className="text-3xl font-black text-gray-900 tracking-tight">{name || "Your Name"}</h1>
           <p className="text-xs mt-1" style={{ color: theme.hex }}>{contact}</p>
         </div>
-        <div className="w-14 h-14 rounded-full border-4 flex items-center justify-center text-xl font-bold text-white" style={{ backgroundColor: theme.hex, borderColor: theme.hex + "88" }}>
-          {name.charAt(0)}
+        <div className="w-16 h-16 rounded-full overflow-hidden border-4 flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style={{ backgroundColor: photo ? "transparent" : theme.hex, borderColor: theme.hex + "88" }}>
+          {photo ? (
+            <img src={photo} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span>{name.charAt(0)}</span>
+          )}
         </div>
       </div>
       <div className="p-8">
@@ -265,13 +274,17 @@ function MinimalLayout({ content, theme }: LayoutProps) {
   );
 }
 
-function BoldHeaderLayout({ content, theme }: LayoutProps) {
+function BoldHeaderLayout({ content, theme, photo }: LayoutProps) {
   const { name, contact, summary, sections } = parseResumeContent(content);
   return (
     <div className="min-h-[1050px] font-sans text-sm bg-white">
       <div className="p-8 flex gap-6 items-center" style={{ background: `linear-gradient(135deg, ${theme.hex}, ${theme.hex}cc)` }}>
-        <div className="w-24 h-24 rounded-full border-4 border-white/40 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0" style={{ backgroundColor: theme.hex + "55" }}>
-          {name.charAt(0)}
+        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white/40 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0" style={{ backgroundColor: photo ? "transparent" : theme.hex + "55" }}>
+          {photo ? (
+            <img src={photo} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span>{name.charAt(0)}</span>
+          )}
         </div>
         <div>
           <h1 className="text-3xl font-black text-white uppercase tracking-wide">{name || "Your Name"}</h1>
@@ -291,7 +304,7 @@ function BoldHeaderLayout({ content, theme }: LayoutProps) {
   );
 }
 
-function InfographicLayout({ content, theme }: LayoutProps) {
+function InfographicLayout({ content, theme, photo }: LayoutProps) {
   const { name, contact, summary, sections } = parseResumeContent(content);
   const half = Math.ceil(sections.length / 2);
   const leftSections = sections.slice(0, half);
@@ -301,8 +314,12 @@ function InfographicLayout({ content, theme }: LayoutProps) {
     <div className="flex min-h-[1050px] font-sans text-sm bg-white">
       <div className="w-[38%] text-white p-6 flex flex-col gap-5" style={{ background: `linear-gradient(180deg, ${theme.hex} 0%, ${theme.hex}dd 100%)` }}>
         <div className="text-center py-4">
-          <div className="w-20 h-20 rounded-full border-4 border-white/50 flex items-center justify-center text-2xl font-black mx-auto mb-3" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
-            {name.charAt(0)}
+          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/50 flex items-center justify-center text-2xl font-black mx-auto mb-3" style={{ backgroundColor: photo ? "transparent" : "rgba(255,255,255,0.15)" }}>
+            {photo ? (
+              <img src={photo} alt={name} className="w-full h-full object-cover" />
+            ) : (
+              <span>{name.charAt(0)}</span>
+            )}
           </div>
           <h1 className="text-lg font-black uppercase">{name || "Your Name"}</h1>
           <p className="text-white/60 text-xs mt-1">{contact}</p>
@@ -398,31 +415,35 @@ function CreativeSplitLayout({ content, theme }: LayoutProps) {
 interface LayoutProps {
   content: string;
   theme: { hex: string; name: string };
+  photo?: string | null;
   editable?: boolean;
   onEdit?: (content: string) => void;
 }
 
 function renderLayout(layout: TemplateLayout, props: LayoutProps) {
+  const photoLayouts = ["sidebar-left", "top-bar", "bold-header", "infographic"];
+  const propsWithPhotoOnly = photoLayouts.includes(layout) ? props : { ...props, photo: undefined };
   switch (layout) {
-    case "sidebar-left": return <SidebarLeftLayout {...props} />;
-    case "sidebar-right": return <SidebarRightLayout {...props} />;
-    case "classic-single": return <ClassicSingleLayout {...props} />;
-    case "two-column": return <TwoColumnLayout {...props} />;
-    case "top-bar": return <TopBarLayout {...props} />;
-    case "minimal": return <MinimalLayout {...props} />;
-    case "bold-header": return <BoldHeaderLayout {...props} />;
-    case "infographic": return <InfographicLayout {...props} />;
-    case "executive": return <ExecutiveLayout {...props} />;
-    case "creative-split": return <CreativeSplitLayout {...props} />;
-    default: return <ClassicSingleLayout {...props} />;
+    case "sidebar-left": return <SidebarLeftLayout {...propsWithPhotoOnly} />;
+    case "sidebar-right": return <SidebarRightLayout {...propsWithPhotoOnly} />;
+    case "classic-single": return <ClassicSingleLayout {...propsWithPhotoOnly} />;
+    case "two-column": return <TwoColumnLayout {...propsWithPhotoOnly} />;
+    case "top-bar": return <TopBarLayout {...propsWithPhotoOnly} />;
+    case "minimal": return <MinimalLayout {...propsWithPhotoOnly} />;
+    case "bold-header": return <BoldHeaderLayout {...propsWithPhotoOnly} />;
+    case "infographic": return <InfographicLayout {...propsWithPhotoOnly} />;
+    case "executive": return <ExecutiveLayout {...propsWithPhotoOnly} />;
+    case "creative-split": return <CreativeSplitLayout {...propsWithPhotoOnly} />;
+    default: return <ClassicSingleLayout {...propsWithPhotoOnly} />;
   }
 }
 
-export function ResumeRender({ resume, editable = false, onContentChange }: ResumeRenderProps) {
+export function ResumeRender({ resume, editable = false, onContentChange, photoOverride }: ResumeRenderProps) {
   const template = getTemplateById(resume.templateId || "");
   const theme = colorThemes.find(t => t.id === resume.colorTheme) || colorThemes[0];
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(resume.generatedResume || "");
+  const activePhoto = photoOverride !== undefined ? photoOverride : (resume.profilePhoto || null);
 
   const handleSave = useCallback(() => {
     if (onContentChange) onContentChange(editContent);
@@ -475,7 +496,7 @@ export function ResumeRender({ resume, editable = false, onContentChange }: Resu
         </Button>
       )}
       <div className="bg-white shadow-xl rounded-lg overflow-hidden border">
-        {renderLayout(template.layout, { content: resume.generatedResume, theme })}
+        {renderLayout(template.layout, { content: resume.generatedResume, theme, photo: activePhoto })}
       </div>
     </div>
   );

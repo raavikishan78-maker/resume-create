@@ -1,20 +1,43 @@
+import { useState, useRef } from "react";
 import { useRoute } from "wouter";
 import { useResume } from "@/hooks/use-resumes";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AtsScoreChart } from "@/components/AtsScoreChart";
-import { Loader2, Printer, CheckCircle2, Copy, LayoutTemplate } from "lucide-react";
+import { Loader2, Printer, CheckCircle2, Copy, LayoutTemplate, Camera, Trash2, UserCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { ResumeRender } from "@/components/ResumeRender";
 import { Link } from "wouter";
+import { getTemplateById } from "@/lib/templates";
+
+const PHOTO_LAYOUTS = ["sidebar-left", "top-bar", "bold-header", "infographic"];
 
 export default function Result() {
   const [, params] = useRoute("/resumes/:id");
   const id = parseInt(params?.id || "0");
   const { data: resume, isLoading, error } = useResume(id);
   const { toast } = useToast();
+  const [photoOverride, setPhotoOverride] = useState<string | null | undefined>(undefined);
+  const photoRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setPhotoOverride(ev.target?.result as string);
+      toast({ title: "Photo updated!", description: "Your photo is now visible in the resume preview." });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removePhoto = () => {
+    setPhotoOverride(null);
+    if (photoRef.current) photoRef.current.value = "";
+    toast({ title: "Photo removed" });
+  };
 
   if (isLoading) {
     return (
@@ -43,6 +66,10 @@ export default function Result() {
     navigator.clipboard.writeText(text);
     toast({ title: "Copied!", description: "Content copied to clipboard" });
   };
+
+  const template = getTemplateById(resume.templateId || "");
+  const supportsPhoto = PHOTO_LAYOUTS.includes(template.layout);
+  const activePhoto = photoOverride !== undefined ? photoOverride : (resume.profilePhoto || null);
 
   return (
     <Layout>
@@ -80,9 +107,39 @@ export default function Result() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-4">
+
+              {/* Photo Upload Banner (only for photo-supporting templates) */}
+              {supportsPhoto && (
+                <div className="flex items-center gap-4 p-3 rounded-xl border-2 border-dashed border-primary/20 bg-primary/5">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 bg-white flex items-center justify-center flex-shrink-0">
+                    {activePhoto ? (
+                      <img src={activePhoto} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserCircle2 className="w-7 h-7 text-muted-foreground/50" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">Profile Photo</p>
+                    <p className="text-xs text-muted-foreground">This template supports a profile photo</p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Button type="button" size="sm" variant="outline" onClick={() => photoRef.current?.click()} data-testid="button-upload-photo-result">
+                      <Camera className="w-3.5 h-3.5 mr-1.5" />
+                      {activePhoto ? "Change" : "Add Photo"}
+                    </Button>
+                    {activePhoto && (
+                      <Button type="button" size="sm" variant="ghost" onClick={removePhoto} className="text-destructive hover:text-destructive">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                  </div>
+                  <input ref={photoRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                </div>
+              )}
+
               <TabsContent value="resume" className="mt-0">
-                <ResumeRender resume={resume} editable={true} />
+                <ResumeRender resume={resume} editable={true} photoOverride={photoOverride} />
               </TabsContent>
 
               <TabsContent value="cover-letter" className="mt-0">
@@ -112,7 +169,7 @@ export default function Result() {
                     </p>
                     <div className="mt-4 p-3 rounded-lg bg-muted/50">
                       <p className="text-xs text-muted-foreground">
-                        <span className="font-semibold">Template used:</span> {resume.templateId?.replace(/-/g, " ")}
+                        <span className="font-semibold">Template:</span> {template.profession} · {template.layout.replace(/-/g, " ")}
                       </p>
                     </div>
                   </Card>
@@ -157,8 +214,26 @@ export default function Result() {
                       <p className="text-xs font-semibold text-muted-foreground mb-1">Candidate</p>
                       <p className="text-sm font-medium">{resume.fullName}</p>
                     </div>
+                    {supportsPhoto && (
+                      <div>
+                        <p className="text-xs font-semibold text-muted-foreground mb-1">Profile Photo</p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-muted border flex items-center justify-center">
+                            {activePhoto ? (
+                              <img src={activePhoto} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                              <UserCircle2 className="w-6 h-6 text-muted-foreground/40" />
+                            )}
+                          </div>
+                          <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => photoRef.current?.click()}>
+                            <Camera className="w-3 h-3 mr-1" />
+                            {activePhoto ? "Change" : "Add"}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                     <div>
-                      <p className="text-xs font-semibold text-muted-foreground mb-1">Job Description Preview</p>
+                      <p className="text-xs font-semibold text-muted-foreground mb-1">Job Description</p>
                       <p className="text-xs text-muted-foreground line-clamp-4">{resume.jobDescription}</p>
                     </div>
                   </div>
@@ -177,7 +252,7 @@ export default function Result() {
 
       {/* Print-only */}
       <div className="hidden print:block">
-        <ResumeRender resume={resume} />
+        <ResumeRender resume={resume} photoOverride={photoOverride} />
       </div>
     </Layout>
   );

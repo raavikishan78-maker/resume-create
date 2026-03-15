@@ -20,6 +20,9 @@ export const resumes = pgTable("resumes", {
   jobDescription: text("job_description").notNull(),
   extraInstructions: text("extra_instructions"),
   
+  // Profile Photo (base64 data URL)
+  profilePhoto: text("profile_photo"),
+
   // Design Preference
   templateId: text("template_id").default("modern"),
   colorTheme: text("color_theme").default("blue"),

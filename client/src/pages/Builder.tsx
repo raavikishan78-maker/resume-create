@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, ArrowRight, Loader2, Sparkles, Check, LayoutTemplate, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Sparkles, Check, LayoutTemplate, Search, X, Camera, UserCircle2, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { templates, colorThemes, categories, Template } from "@/lib/templates";
+import { templates, colorThemes, categories } from "@/lib/templates";
 import { TemplateThumbnail } from "@/components/ResumeRender";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
@@ -32,6 +32,8 @@ export default function Builder() {
   const [currentStep, setCurrentStep] = useState(0);
   const [templateSearch, setTemplateSearch] = useState("");
   const [templateCategory, setTemplateCategory] = useState("All");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const { mutate: createResume, isPending } = useCreateResume();
 
   const urlTemplate = getUrlParam("template");
@@ -54,9 +56,28 @@ export default function Builder() {
       extraInstructions: "",
       templateId: urlTemplate || "software-engineer-sidebar-left",
       colorTheme: "blue",
+      profilePhoto: "",
     },
     mode: "onChange",
   });
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target?.result as string;
+      setPhotoPreview(dataUrl);
+      setValue("profilePhoto", dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removePhoto = () => {
+    setPhotoPreview(null);
+    setValue("profilePhoto", "");
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  };
 
   const { register, trigger, watch, setValue, formState: { errors } } = form;
   const currentTemplateId = watch("templateId");
@@ -110,6 +131,48 @@ export default function Builder() {
               {/* Step 1: Personal Info */}
               {currentStep === 0 && (
                 <motion.div key="step1" variants={pageVariants} initial="initial" animate="animate" exit="exit" className="space-y-6">
+                  {/* Photo Upload */}
+                  <div className="flex items-start gap-6 p-4 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/20 hover:border-primary/40 transition-colors">
+                    <div className="flex-shrink-0">
+                      <div className="w-24 h-24 rounded-full overflow-hidden bg-muted border-4 border-white shadow-md flex items-center justify-center relative">
+                        {photoPreview ? (
+                          <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                          <UserCircle2 className="w-14 h-14 text-muted-foreground/40" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Label className="text-sm font-semibold">Profile Photo <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                      <p className="text-xs text-muted-foreground">Add your photo to templates that support a profile picture. Recommended: square image, min 200×200px.</p>
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => photoInputRef.current?.click()}
+                          data-testid="button-upload-photo"
+                        >
+                          <Camera className="w-3.5 h-3.5 mr-1.5" />
+                          {photoPreview ? "Change Photo" : "Upload Photo"}
+                        </Button>
+                        {photoPreview && (
+                          <Button type="button" variant="ghost" size="sm" onClick={removePhoto} className="text-destructive hover:text-destructive">
+                            <Trash2 className="w-3.5 h-3.5 mr-1" /> Remove
+                          </Button>
+                        )}
+                      </div>
+                      <input
+                        ref={photoInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        data-testid="input-photo-file"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name *</Label>
