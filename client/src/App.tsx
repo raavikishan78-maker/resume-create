@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import Builder from "@/pages/Builder";
 import Result from "@/pages/Result";
 import Templates from "@/pages/Templates";
+import Admin from "@/pages/Admin";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/create" component={Builder} />
       <Route path="/templates" component={Templates} />
       <Route path="/resumes/:id" component={Result} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
