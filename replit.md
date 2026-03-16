@@ -53,6 +53,18 @@ The resume schema includes:
 - **Production**: Custom build script (script/build.ts) using esbuild for server bundling and Vite for client
 - **Database Migrations**: drizzle-kit push for schema synchronization
 
+## Authentication
+
+Replit Auth (OpenID Connect) is integrated:
+- Users sign in via `/api/login` (supports Google, GitHub, Apple, email/password)
+- Sessions stored in PostgreSQL `sessions` table
+- User data stored in `users` table (`shared/models/auth.ts`)
+- Auth wired in `server/routes.ts` via `setupAuth()` and `registerAuthRoutes()`
+- Frontend: `useAuth()` hook (`client/src/hooks/use-auth.ts`) provides `user`, `isAuthenticated`, `isLoading`
+- Home page shows landing page for logged-out users, dashboard for logged-in users
+- Resumes are scoped per user via `userId` column on the `resumes` table
+- All resume create/list API routes require authentication (`isAuthenticated` middleware)
+
 ## External Dependencies
 
 ### AI Services

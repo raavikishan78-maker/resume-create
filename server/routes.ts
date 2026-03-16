@@ -5,6 +5,7 @@ import { api } from "@shared/routes";
 import { insertResumeSchema } from "@shared/schema";
 import OpenAI from "openai";
 import { z } from "zod";
+import { setupAuth, isAuthenticated, registerAuthRoutes } from "./replit_integrations/auth";
 
 // Initialize OpenAI client using Replit AI Integrations
 const openai = new OpenAI({
@@ -17,13 +18,18 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // Setup Replit Auth (MUST be before other routes)
+  await setupAuth(app);
+  registerAuthRoutes(app);
+
   // Create Resume & Generate Content
-  app.post(api.resumes.create.path, async (req, res) => {
+  app.post(api.resumes.create.path, isAuthenticated, async (req, res) => {
     try {
+      const userId = (req.user as any)?.claims?.sub;
       const data = insertResumeSchema.parse(req.body);
       
-      // 1. Save initial input to DB
-      let resume = await storage.createResume(data);
+      // 1. Save initial input to DB (with userId)
+      let resume = await storage.createResume({ ...data, userId });
 
       // 2. Prepare Prompt for OpenAI
       const systemPrompt = `You are a senior career coach, professional resume writer, and ATS optimization expert. 
@@ -125,9 +131,10 @@ export async function registerRoutes(
     res.json(resume);
   });
 
-  // List Resumes
-  app.get(api.resumes.list.path, async (req, res) => {
-    const resumes = await storage.getResumes();
+  // List Resumes (only for logged-in user)
+  app.get(api.resumes.list.path, isAuthenticated, async (req, res) => {
+    const userId = (req.user as any)?.claims?.sub;
+    const resumes = await storage.getResumes(userId);
     res.json(resumes);
   });
 

@@ -2,8 +2,11 @@ import { pgTable, text, serial, integer, timestamp, jsonb } from "drizzle-orm/pg
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export * from "./models/auth";
+
 export const resumes = pgTable("resumes", {
   id: serial("id").primaryKey(),
+  userId: text("user_id"),
   fullName: text("full_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
