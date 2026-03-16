@@ -122,6 +122,23 @@ export async function registerRoutes(
     }
   });
 
+  // Update Resume Content (edit & save)
+  app.patch("/api/resumes/:id/content", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { generatedResume } = req.body;
+      if (!generatedResume || typeof generatedResume !== "string") {
+        return res.status(400).json({ message: "generatedResume is required" });
+      }
+      const updated = await storage.updateResumeGeneratedContent(id, { generatedResume });
+      if (!updated) return res.status(404).json({ message: "Resume not found" });
+      res.json(updated);
+    } catch (error) {
+      console.error("Update resume content error:", error);
+      res.status(500).json({ message: "Failed to update resume" });
+    }
+  });
+
   // Get Resume
   app.get(api.resumes.get.path, async (req, res) => {
     const resume = await storage.getResume(parseInt(req.params.id));

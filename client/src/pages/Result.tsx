@@ -11,6 +11,8 @@ import { Card } from "@/components/ui/card";
 import { ResumeRender } from "@/components/ResumeRender";
 import { Link } from "wouter";
 import { getTemplateById } from "@/lib/templates";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 const PHOTO_LAYOUTS = ["sidebar-left", "top-bar", "bold-header", "infographic"];
 
@@ -21,6 +23,19 @@ export default function Result() {
   const { toast } = useToast();
   const [photoOverride, setPhotoOverride] = useState<string | null | undefined>(undefined);
   const photoRef = useRef<HTMLInputElement>(null);
+
+  const saveContentMutation = useMutation({
+    mutationFn: async (generatedResume: string) => {
+      return await apiRequest("PATCH", `/api/resumes/${id}/content`, { generatedResume });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/resumes/${id}`] });
+      toast({ title: "Saved!", description: "Resume content updated successfully." });
+    },
+    onError: () => {
+      toast({ title: "Save failed", description: "Could not save changes. Try again.", variant: "destructive" });
+    },
+  });
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -139,7 +154,12 @@ export default function Result() {
               )}
 
               <TabsContent value="resume" className="mt-0">
-                <ResumeRender resume={resume} editable={true} photoOverride={photoOverride} />
+                <ResumeRender
+                  resume={resume}
+                  editable={true}
+                  photoOverride={photoOverride}
+                  onContentChange={(content) => saveContentMutation.mutate(content)}
+                />
               </TabsContent>
 
               <TabsContent value="cover-letter" className="mt-0">

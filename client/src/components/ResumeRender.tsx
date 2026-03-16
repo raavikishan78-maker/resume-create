@@ -443,17 +443,19 @@ export function ResumeRender({ resume, editable = false, onContentChange, photoO
   const theme = colorThemes.find(t => t.id === resume.colorTheme) || colorThemes[0];
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(resume.generatedResume || "");
+  const [displayContent, setDisplayContent] = useState(resume.generatedResume || "");
   const activePhoto = photoOverride !== undefined ? photoOverride : (resume.profilePhoto || null);
 
   const handleSave = useCallback(() => {
+    setDisplayContent(editContent);
     if (onContentChange) onContentChange(editContent);
     setIsEditing(false);
   }, [editContent, onContentChange]);
 
   const handleCancel = useCallback(() => {
-    setEditContent(resume.generatedResume || "");
+    setEditContent(displayContent);
     setIsEditing(false);
-  }, [resume.generatedResume]);
+  }, [displayContent]);
 
   if (!resume.generatedResume) {
     return (
@@ -496,7 +498,7 @@ export function ResumeRender({ resume, editable = false, onContentChange, photoO
         </Button>
       )}
       <div className="bg-white shadow-xl rounded-lg overflow-hidden border">
-        {renderLayout(template.layout, { content: resume.generatedResume, theme, photo: activePhoto })}
+        {renderLayout(template.layout, { content: displayContent, theme, photo: activePhoto })}
       </div>
     </div>
   );
